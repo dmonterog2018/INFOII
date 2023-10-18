@@ -20,9 +20,11 @@ def comprobar_celda_disponible(celda,equipo) -> bool:
     for i in equipo:
         for t in i.values():
             if t == celda:
-                print('La celda elegida ya esta ocupada por otro miembro. Seleccione una correcta')
+                print('La celda elegida ya esta ocupada por otro miembro. Seleccione otra por favor')
                 return False
-    return True
+
+    else:
+        return True
 
 
 
@@ -41,4 +43,4 @@ def validar_celda_contigua(celda1,celda2) -> bool:
         return False
 
 
-#validar_celda_contigua('a2', 'b3')
+
