@@ -1,7 +1,7 @@
 # Importamos las funciones necesarias de los otros archivos.
 
 from utils import limpiar_terminal
-
+from jugador import Jugador
 
 
 
@@ -9,10 +9,14 @@ from utils import limpiar_terminal
 def main():
     print('Bienvenidos a Tactical Battle. Iniciemos tu aventura en el juego!\n')
     input('Turno del Jugador 1. Pulsa intro para comenzar el juego...')
+    j1 = Jugador('nombre')
+    j1.crear_equipo('nombre')
     input('Jugador 1, ha terminado su turno')
     limpiar_terminal()
 
     input('Turno del Jugador 2. Pulsa intro para comenzar su turno...')
+    j2 = Jugador('nombre')
+    j2.crear_equipo('nombre')
     input('Jugador 2, ha terminado su turno. Pulse intro.')
     limpiar_terminal()
 
