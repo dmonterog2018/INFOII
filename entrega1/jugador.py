@@ -1,5 +1,8 @@
 from utils import validar_celda
 from utils import comprobar_celda_disponible
+#from personajes import Personajes
+
+
 max_col = 'd'
 max_row = 4
 
@@ -9,6 +12,7 @@ class Jugador:
     def __init__(self, nombre):
         self.nombre = nombre
         self.equipo = []
+        self.turno_end = False
 
 
 
@@ -20,12 +24,11 @@ class Jugador:
             celda_medico = input('Indica la celda (A-D, 1-4. p.ej: B2) en la que posicionar al Medico: ')
             if validar_celda(celda_medico, max_col, max_row) == True:
                 if comprobar_celda_disponible(celda_medico,self.equipo) == True:
-                    print('HOLA')
                     dicc = {'medico':celda_medico}
                     self.equipo.append(dicc)
                     break
-            else:
-                pass
+
+
         while True:
             celda_artillero = input('Indica la celda (A-D, 1-4. p.ej: B2) en la que posicionar al Artillero: ')
             if validar_celda(celda_artillero, max_col, max_row) == True:
@@ -33,8 +36,7 @@ class Jugador:
                     dicc = {'artillero': celda_artillero}
                     self.equipo.append(dicc)
                     break
-            else:
-                pass
+
 
         while True:
             celda_francotirador = input('Indica la celda (A-D, 1-4. p.ej: B2) en la que posicionar al Francotirador: ')
@@ -43,8 +45,7 @@ class Jugador:
                     dicc = {'francotirador': celda_francotirador}
                     self.equipo.append(dicc)
                     break
-            else:
-                pass
+
 
         while True:
             celda_inteligencia = input('Indica la celda (A-D, 1-4. p.ej: B2) en la que posicionar al Inteligencia: ')
@@ -53,20 +54,42 @@ class Jugador:
                     dicc = {'inteligencia': celda_inteligencia}
                     self.equipo.append(dicc)
                     print(self.equipo)
-                break
+                    break
+
+    def realizar_accion(self):
+
+        print('-----> 1. Mover (Medico) <-----')
+        print('-----> 2. Mover (Artillero) <-----')
+        print('-----> 3. Mover (Francotirador) <-----')
+        print('-----> 4. Mover (Inteligencia) <-----')
+        print('-----> 5. Habilidad (Medico) <-----')
+        print('-----> 6. Habilidad (Artillero) <-----')
+        print('-----> 7. Habilidad (Francotirador) <-----')
+        print('-----> 8. Habilidad (Inteligencia) <-----')
+
+        acc = input('Seleccione una acción: ')
+
+        try:
+            int(acc)
+            if int(acc) <= 8:
+                print('ENTRA')
             else:
-                pass
+                print('El numero introducido no es correcto')
+        except ValueError:
+            print('CACA')
+            pass
 
-class Personaje:
 
-    personajes = {
-        'nombre': 'Médico',
-        'vida_maxima' : 200,
-        'vida_actual' : 200,
-        'danyo' : 30,
-        'posicion': '',
-        'enfriamiento_restante' : 0
-    }
 
-jugar = Jugador('nombre')
-jugar.crear_equipo('nombre')
+
+    def turno(self) -> bool:
+        if self.turno_end:
+            return True
+        else:
+
+            return False
+
+
+jugar = Jugador('Nombre')
+#jugar.crear_equipo(jugar)
+jugar.realizar_accion()
