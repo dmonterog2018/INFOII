@@ -1,6 +1,9 @@
 from utils import validar_celda
 from utils import comprobar_celda_disponible
-#from personajes import Personajes
+from personajes import medico
+from personajes import artillero
+from personajes import francotirador
+from personajes import inteligencia
 
 
 max_col = 'd'
@@ -13,46 +16,70 @@ class Jugador:
         self.nombre = nombre
         self.equipo = []
         self.turno_end = False
+        self.informe = []
+        self.medico_instancia = None   #   PREGUNTAR AL PROFE PORQUE LA ISNTANCIA ASI NO FUNCIONA
+        self.turno = []
+    def crear_equipo(self,nombre):
 
+        # CREAMOS EL MEDICO CON SUS CARACTERISTICAS
+        medico_instancia = medico(1,1, 0,'',0)
+        dicc_medico = {'nombre': 'medico', 'vida maxima': medico_instancia.vida_maxima, 'vida actual': medico_instancia.vida_actual, 'dano': medico_instancia.dano,
+                       'posicion': medico_instancia.posicion, 'enfriamiento': medico_instancia.enfriamiento}
+        self.equipo.append(dicc_medico)
 
+        # CREAMOS EL ARTILLERO CON SUS CARACTERISTICAS
 
-    def crear_equipo(self, nombre):
-        dicc = {}
+        artillero_instancia = artillero(2, 2, 1, '', 0)
+        dicc_artillero = {'nombre': 'artillero', 'vida maxima': artillero_instancia.vida_maxima,
+                       'vida actual': artillero_instancia.vida_actual, 'dano': artillero_instancia.dano,
+                       'posicion': artillero_instancia.posicion, 'enfriamiento': artillero_instancia.enfriamiento}
+        self.equipo.append(dicc_artillero)
 
+        # CREAMOS EL FRANCOTIRADOR CON SUS CARACTERISTICAS
+
+        francotirador_instancia = francotirador(3, 3, 2, '', 0)
+        dicc_francotirador = {'nombre': 'francotirador', 'vida maxima': francotirador_instancia.vida_maxima,
+                          'vida actual': francotirador_instancia.vida_actual, 'dano': francotirador_instancia.dano,
+                          'posicion': francotirador_instancia.posicion, 'enfriamiento': francotirador_instancia.enfriamiento}
+        self.equipo.append(dicc_francotirador)
+
+        # CREAMOS EL INTELIGENCIA CON SUS CARACTERISTICAS
+
+        inteligencia_instancia = inteligencia(2, 2, 0, '', 0)
+        dicc_inteligencia = {'nombre': 'inteligencia', 'vida maxima': inteligencia_instancia.vida_maxima,
+                              'vida actual': inteligencia_instancia.vida_actual, 'dano': inteligencia_instancia.dano,
+                              'posicion': inteligencia_instancia.posicion,
+                              'enfriamiento': inteligencia_instancia.enfriamiento}
+        self.equipo.append(dicc_inteligencia)
+
+    def posicionar_equipo(self, nombre):
 
         while True:
             celda_medico = input('Indica la celda (A-D, 1-4. p.ej: B2) en la que posicionar al Medico: ')
             if validar_celda(celda_medico, max_col, max_row) == True:
                 if comprobar_celda_disponible(celda_medico,self.equipo) == True:
-                    dicc = {'medico':celda_medico}
-                    self.equipo.append(dicc)
+                    self.equipo[0]['posicion'] = celda_medico
                     break
-
 
         while True:
             celda_artillero = input('Indica la celda (A-D, 1-4. p.ej: B2) en la que posicionar al Artillero: ')
             if validar_celda(celda_artillero, max_col, max_row) == True:
                 if comprobar_celda_disponible(celda_artillero, self.equipo) == True:
-                    dicc = {'artillero': celda_artillero}
-                    self.equipo.append(dicc)
+                    self.equipo[1]['posicion'] = celda_artillero
                     break
-
 
         while True:
             celda_francotirador = input('Indica la celda (A-D, 1-4. p.ej: B2) en la que posicionar al Francotirador: ')
             if validar_celda(celda_francotirador, max_col, max_row) == True:
                 if comprobar_celda_disponible(celda_francotirador, self.equipo) == True:
-                    dicc = {'francotirador': celda_francotirador}
-                    self.equipo.append(dicc)
+                    self.equipo[2]['posicion'] = celda_francotirador
                     break
-
 
         while True:
             celda_inteligencia = input('Indica la celda (A-D, 1-4. p.ej: B2) en la que posicionar al Inteligencia: ')
             if validar_celda(celda_inteligencia, max_col, max_row) == True:
                 if comprobar_celda_disponible(celda_inteligencia, self.equipo) == True:
-                    dicc = {'inteligencia': celda_inteligencia}
-                    self.equipo.append(dicc)
+                    self.equipo[3]['posicion'] = celda_inteligencia
                     print(self.equipo)
                     break
 
@@ -68,18 +95,75 @@ class Jugador:
         print('-----> 8. Habilidad (Inteligencia) <-----')
 
         acc = input('Seleccione una acción: ')
-
         try:
             int(acc)
             if int(acc) <= 8:
-                print('ENTRA')
+                if int(acc) == 1:
+                    while True:
+                        celda_nuevo = input('Introduce la celda a la que quiere mover el personaje: ')
+                        medico1 = self.equipo[0]
+                        medico_instancia = medico(medico1['vida maxima'], medico1['vida actual'], medico1['dano'],
+                                                  medico1['posicion'],medico1['enfriamiento'])
+                        if medico_instancia.mover(celda_nuevo, self.equipo) == True:
+                            self.turno.append(f'Se ha movido el MEDICO a la celda: {celda_nuevo}')
+                            break
+                elif int(acc) == 2:
+                    while True:
+                        celda_nuevo = input('Introduce la celda a la que quiere mover el personaje: ')
+                        artillero1 = self.equipo[1]
+                        artillero_instancia = artillero(artillero1['vida maxima'], artillero1['vida actual'],
+                                                        artillero1['dano'], artillero1['posicion'], artillero1['enfriamiento'])
+                        if artillero_instancia.mover(celda_nuevo, self.equipo) == True:
+                            self.turno.append(f'Se ha movido el ARTILLERO a la celda: {celda_nuevo}')
+                            break
+                elif int(acc) == 3:
+                    while True:
+                        celda_nuevo = input('Introduce la celda a la que quiere mover el personaje: ')
+                        francotirador1 = self.equipo[2]
+                        francotirador_instancia = francotirador(francotirador1['vida maxima'], francotirador1['vida actual'],
+                                                                francotirador1['dano'], francotirador1['posicion'], francotirador1['enfriamiento'])
+                        if francotirador_instancia.mover(celda_nuevo, self.equipo) == True:
+                            self.turno.append(f'Se ha movido el FRANCOTIRADOR a la celda: {celda_nuevo}')
+                            break
+                elif int(acc) == 4:
+                    while True:
+                        celda_nuevo = input('Introduce la celda a la que quiere mover el personaje: ')
+                        inteligencia1 = self.equipo[3]
+                        inteligencia_instancia = inteligencia(inteligencia1['vida maxima'], inteligencia1['vida actual'],
+                                                                inteligencia1['dano'], inteligencia1['posicion'], inteligencia1['enfriamiento'])
+                        if inteligencia_instancia.mover(celda_nuevo, self.equipo) == True:
+                            self.turno.append(f'Se ha movido el INTELIGENCIA a la celda: {celda_nuevo}')
+                            break
+                elif int(acc) == 5:
+                    while True:
+                        celda_curar = input('Introduce la celda a la que quiere mover el personaje: ')
+                        medico1 = self.equipo[0]
+                        medico_instancia = medico(medico1['vida maxima'], medico1['vida actual'], medico1['dano'],
+                                                  medico1['posicion'], medico1['enfriamiento'])
+                        if medico_instancia.habilidad(celda_curar, self.equipo) == True:
+                            print(self.equipo[0])
+                        break
+                elif int(acc) == 6:
+                    pass
+                elif int(acc) == 7:
+                    pass
+                elif int(acc) == 8:
+                    pass
             else:
                 print('El numero introducido no es correcto')
         except ValueError:
             print('CACA')
             pass
 
+    def informe1(self):
+        print('-----> INFORME <-----')
+        for p in self.turno:
+            print(p)
+        print('-----> SITUACIÓN DEL EQUIPO <-----')
 
+        for elemento in self.equipo:
+            if elemento['vida actual'] > 0:
+                print(f"{elemento['nombre'].upper()} --> Posicion: {elemento['posicion'].upper()} --> [Vidas {elemento['vida actual']}/{elemento['vida maxima']}]")
 
 
     def turno(self) -> bool:
@@ -90,6 +174,9 @@ class Jugador:
             return False
 
 
-jugar = Jugador('Nombre')
-#jugar.crear_equipo(jugar)
+'''jugar = Jugador('Nombre')
+jugar.crear_equipo(jugar)
+jugar.posicionar_equipo(jugar)
 jugar.realizar_accion()
+jugar.informe1()'''
+
