@@ -2,15 +2,16 @@ from utils import validar_celda_contigua
 from utils import validar_celda
 from utils import comprobar_celda_disponible
 class Personajes:
-    def __init__(self, vida_maxima, vida_actual, dano, posicion,enfriamiento, equipo):
+    def __init__(self, vida_maxima, vida_actual, dano, posicion,enfriamiento):
         self.vida_maxima = vida_maxima
         self.vida_actual = vida_actual
         self.dano = dano
-        self.posicion = posicion  # Posicion que ocupa en el tablero
+        self.posicion = posicion
         self.enfriamiento = enfriamiento
-        self.equipo = equipo
+
 
     def mover(self, celda_nueva, equipo):
+
         print('Aqui no entra')
 
 
@@ -31,22 +32,14 @@ class Personajes:
 
 
 class medico(Personajes):
-    vida_maxima = 1
-    vida_actual = 1
-    dano = 0
-    posicion = ''  # Posicion que ocupa en el tablero
-    enfriamiento_restante = 0
-    equipo = []
+    def __init__(self, vida_maxima, vida_actual, dano, posicion, enfriamiento):
+        super().__init__(vida_maxima,vida_actual,dano,posicion,enfriamiento)
 
-    # Este metodo se utiliza para mover el personaje durante el turno
+    def habilidad(self,celda_curar, equipo):
+        if self.vida_actual > 0:
+            if validar_celda(celda_curar,'d',4):
+                pass
 
-    # Este metodo se utiliza para ejecutrar la habilidad de un personaje
-    def habilidad(self,nombre, equipo):
-        for i in equipo:
-            for v in i.values():
-                if v == nombre:
-                    pass
-        return
 
     def mover(self, celda_nueva, equipo):
 
@@ -54,42 +47,47 @@ class medico(Personajes):
             if comprobar_celda_disponible(celda_nueva, equipo):
                 if validar_celda_contigua(self.posicion,celda_nueva):
                     self.posicion = celda_nueva
-                    equipo[0]['medico'] = self.posicion
+                    equipo[0]['posicion'] = self.posicion
+                    return True
+                else:
+                    return False
+            else:
+                return False
+        else:
+            return False
+
 
 
 # Personaje inteligencia (no militar)
 class inteligencia(Personajes):
-    vida_maxima = 2
-    vida_actual = 2
-    dano = 0
-    posicion = ''  # Posicion que ocupa en el tablero
-    enfriamiento_restante = 0
+    def __init__(self, vida_maxima, vida_actual, dano, posicion, enfriamiento):
+        super().__init__(vida_maxima,vida_actual,dano,posicion,enfriamiento)
 
-    # equipo = list[] Comentado porque no sabemos como utilizarlo de momento
-    # Este metodo se utiliza para ejecutrar la habilidad de un personaje
+
     def habilidad(self):
         return
-
     def mover(self, celda_nueva, equipo):
 
         if validar_celda(celda_nueva, 'd',4):
             if comprobar_celda_disponible(celda_nueva, equipo):
                 if validar_celda_contigua(self.posicion,celda_nueva):
                     self.posicion = celda_nueva
-                    equipo[0]['inteligencia'] = self.posicion
+                    equipo[3]['inteligencia'] = self.posicion
+                    return True
+                else:
+                    return False
+            else:
+                return False
+        else:
+            return False
 
 
 # Personaje artillero (militar)
 class artillero(Personajes):
-    vida_maxima = 2
-    vida_actual = 2
-    dano = 1
-    posicion = ''  # Posicion que ocupa en el tablero
-    enfriamiento_restante = 0
 
-    # equipo = list[] Comentado porque no sabemos como utilizarlo de momento
+    def __init__(self, vida_maxima, vida_actual, dano, posicion, enfriamiento):
+        super().__init__(vida_maxima,vida_actual,dano,posicion,enfriamiento)
 
-    # Este metodo se utiliza para ejecutrar la habilidad de un personaje
     def habilidad(self):
         return
 
@@ -99,20 +97,22 @@ class artillero(Personajes):
             if comprobar_celda_disponible(celda_nueva, equipo):
                 if validar_celda_contigua(self.posicion,celda_nueva):
                     self.posicion = celda_nueva
-                    equipo[0]['artillero'] = self.posicion
+                    equipo[1]['artillero'] = self.posicion
+                    return True
+                else:
+                    return False
+            else:
+                return False
+        else:
+            return False
 
 
 # Personaje francotirador (militar)
 class francotirador(Personajes):
-    vida_maxima = 3
-    vida_actual = 3
-    dano = 3
-    posicion = ''  # Posicion que ocupa en el tablero
-    enfriamiento_restante = 0
 
-    # equipo = list[] Comentado porque no sabemos como utilizarlo de momento
+    def __init__(self, vida_maxima, vida_actual, dano, posicion, enfriamiento):
+        super().__init__(vida_maxima,vida_actual,dano,posicion,enfriamiento)
 
-    # Este metodo se utiliza para ejecutrar la habilidad de un personaje
     def habilidad(self):
         return
 
@@ -122,4 +122,11 @@ class francotirador(Personajes):
             if comprobar_celda_disponible(celda_nueva, equipo):
                 if validar_celda_contigua(self.posicion,celda_nueva):
                     self.posicion = celda_nueva
-                    equipo[0]['francotirador'] = self.posicion
+                    equipo[2]['francotirador'] = self.posicion
+                    return True
+                else:
+                    return False
+            else:
+                return False
+        else:
+            return False
