@@ -22,11 +22,15 @@ def main():
     input('Jugador 2, ha terminado su turno. Pulse intro.')
     limpiar_terminal()
 
+    j1.set_oponente(j2)
+    j2.set_oponente(j1)
     final = False
     while not final:
         input('Turno del Jugador 1. Pulsa intro para comenzar')
-        j1.realizar_accion()
         j1.informe1()
+        j1.realizar_accion()
+        j1.set_oponente(j2)
+
         if final:
             print('****** EL JUGADOR 1 HA GANADO LA PARTIDA! ********')
             return 0
@@ -34,8 +38,9 @@ def main():
         limpiar_terminal()
 
         input('Turno del Jugador 2. Pulsa intro para comenzar')
-        j2.realizar_accion()
         j2.informe1()
+        j2.realizar_accion()
+        j2.set_oponente(j1)
         if final:
             print('****** EL JUGADOR 2 HA GANADO LA PARTIDA! ********')
             return 0
