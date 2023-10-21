@@ -14,18 +14,20 @@ max_row = 4
 class Jugador:
     def __init__(self, nombre):
         self.nombre = nombre
+        self.oponente = None
         self.equipo = []
         self.turno_end = False
         self.informe = []
         self.medico_instancia = None   #   PREGUNTAR AL PROFE PORQUE LA ISNTANCIA ASI NO FUNCIONA
         self.turno = []
+
     def crear_equipo(self,nombre):
 
         # CREAMOS EL MEDICO CON SUS CARACTERISTICAS
-        medico_instancia = medico(1,1, 0,'',0)
+        medico_instancia = medico(1,1, 0,'',0)  #Instanciamos los valores que tiene el medico al inicializar el juego.
         dicc_medico = {'nombre': 'medico', 'vida maxima': medico_instancia.vida_maxima, 'vida actual': medico_instancia.vida_actual, 'dano': medico_instancia.dano,
                        'posicion': medico_instancia.posicion, 'enfriamiento': medico_instancia.enfriamiento}
-        self.equipo.append(dicc_medico)
+        self.equipo.append(dicc_medico)   #  Guardamos todos los  valores en un diccionario dentro de la lista
 
         # CREAMOS EL ARTILLERO CON SUS CARACTERISTICAS
 
@@ -37,7 +39,7 @@ class Jugador:
 
         # CREAMOS EL FRANCOTIRADOR CON SUS CARACTERISTICAS
 
-        francotirador_instancia = francotirador(3, 3, 2, '', 0)
+        francotirador_instancia = francotirador(3, 3, 3, '', 0)
         dicc_francotirador = {'nombre': 'francotirador', 'vida maxima': francotirador_instancia.vida_maxima,
                           'vida actual': francotirador_instancia.vida_actual, 'dano': francotirador_instancia.dano,
                           'posicion': francotirador_instancia.posicion, 'enfriamiento': francotirador_instancia.enfriamiento}
@@ -83,6 +85,18 @@ class Jugador:
                     print(self.equipo)
                     break
 
+    def recibir_accion(self, tipo,celda_afectada):
+
+        if tipo == 'f':
+            print(self.oponente.equipo)
+            for miembro in self.oponente.equipo:
+                if miembro['posicion'] == celda_afectada:
+                    miembro['vida actual'] = 0
+                    print('-----> RESULTADO DE LA ACCIÓN <-----')
+                    print(f"El {miembro['nombre']} ha muerto en la celda: {celda_afectada}")
+                    self.oponente.turno.append(f"Tu {miembro['nombre']} ha muerto :(")
+                else:
+                    pass
     def realizar_accion(self):
 
         print('-----> 1. Mover (Medico) <-----')
@@ -94,77 +108,96 @@ class Jugador:
         print('-----> 7. Habilidad (Francotirador) <-----')
         print('-----> 8. Habilidad (Inteligencia) <-----')
 
-        acc = input('Seleccione una acción: ')
-        try:
-            int(acc)
-            if int(acc) <= 8:
-                if int(acc) == 1:
-                    while True:
-                        celda_nuevo = input('Introduce la celda a la que quiere mover el personaje: ')
-                        medico1 = self.equipo[0]
-                        medico_instancia = medico(medico1['vida maxima'], medico1['vida actual'], medico1['dano'],
-                                                  medico1['posicion'],medico1['enfriamiento'])
-                        if medico_instancia.mover(celda_nuevo, self.equipo) == True:
-                            self.turno.append(f'Se ha movido el MEDICO a la celda: {celda_nuevo}')
-                            break
-                elif int(acc) == 2:
-                    while True:
-                        celda_nuevo = input('Introduce la celda a la que quiere mover el personaje: ')
-                        artillero1 = self.equipo[1]
-                        artillero_instancia = artillero(artillero1['vida maxima'], artillero1['vida actual'],
-                                                        artillero1['dano'], artillero1['posicion'], artillero1['enfriamiento'])
-                        if artillero_instancia.mover(celda_nuevo, self.equipo) == True:
-                            self.turno.append(f'Se ha movido el ARTILLERO a la celda: {celda_nuevo}')
-                            break
-                elif int(acc) == 3:
-                    while True:
-                        celda_nuevo = input('Introduce la celda a la que quiere mover el personaje: ')
-                        francotirador1 = self.equipo[2]
-                        francotirador_instancia = francotirador(francotirador1['vida maxima'], francotirador1['vida actual'],
-                                                                francotirador1['dano'], francotirador1['posicion'], francotirador1['enfriamiento'])
-                        if francotirador_instancia.mover(celda_nuevo, self.equipo) == True:
-                            self.turno.append(f'Se ha movido el FRANCOTIRADOR a la celda: {celda_nuevo}')
-                            break
-                elif int(acc) == 4:
-                    while True:
-                        celda_nuevo = input('Introduce la celda a la que quiere mover el personaje: ')
-                        inteligencia1 = self.equipo[3]
-                        inteligencia_instancia = inteligencia(inteligencia1['vida maxima'], inteligencia1['vida actual'],
-                                                                inteligencia1['dano'], inteligencia1['posicion'], inteligencia1['enfriamiento'])
-                        if inteligencia_instancia.mover(celda_nuevo, self.equipo) == True:
-                            self.turno.append(f'Se ha movido el INTELIGENCIA a la celda: {celda_nuevo}')
-                            break
-                elif int(acc) == 5:
-                    while True:
-                        celda_curar = input('Introduce la celda a la que quiere mover el personaje: ')
-                        medico1 = self.equipo[0]
-                        medico_instancia = medico(medico1['vida maxima'], medico1['vida actual'], medico1['dano'],
-                                                  medico1['posicion'], medico1['enfriamiento'])
-                        if medico_instancia.habilidad(celda_curar, self.equipo) == True:
-                            print(self.equipo[0])
-                        break
-                elif int(acc) == 6:
-                    pass
-                elif int(acc) == 7:
-                    pass
-                elif int(acc) == 8:
-                    pass
-            else:
-                print('El numero introducido no es correcto')
-        except ValueError:
-            print('CACA')
-            pass
+        while True:
+            try:
+                acc = input('Seleccione una acción: ')
+                int(acc)
+                if int(acc) <= 8:
+                    if int(acc) == 1:
+                        while True:
+                            celda_nuevo = input('Introduce la celda a la que quiere mover el personaje: ')
+                            medico1 = self.equipo[0]
+                            medico_instancia = medico(medico1['vida maxima'], medico1['vida actual'], medico1['dano'],
+                                                      medico1['posicion'],medico1['enfriamiento'])
+                            if medico_instancia.mover(celda_nuevo, self.equipo) == True:
+                                return True
+
+                    elif int(acc) == 2:
+                        while True:
+                            celda_nuevo = input('Introduce la celda a la que quiere mover el personaje: ')
+                            artillero1 = self.equipo[1]
+                            artillero_instancia = artillero(artillero1['vida maxima'], artillero1['vida actual'],
+                                                            artillero1['dano'], artillero1['posicion'], artillero1['enfriamiento'])
+                            if artillero_instancia.mover(celda_nuevo, self.equipo) == True:
+                                return True
+
+                    elif int(acc) == 3:
+                        while True:
+                            celda_nuevo = input('Introduce la celda a la que quiere mover el personaje: ')
+                            francotirador1 = self.equipo[2]
+                            francotirador_instancia = francotirador(francotirador1['vida maxima'], francotirador1['vida actual'],
+                                                                    francotirador1['dano'], francotirador1['posicion'], francotirador1['enfriamiento'])
+                            if francotirador_instancia.mover(celda_nuevo, self.equipo) == True:
+                                return True
+                    elif int(acc) == 4:
+                        while True:
+                            celda_nuevo = input('Introduce la celda a la que quiere mover el personaje: ')
+                            inteligencia1 = self.equipo[3]
+                            inteligencia_instancia = inteligencia(inteligencia1['vida maxima'], inteligencia1['vida actual'],
+                                                                    inteligencia1['dano'], inteligencia1['posicion'], inteligencia1['enfriamiento'])
+                            if inteligencia_instancia.mover(celda_nuevo, self.equipo) == True:
+                                return True
+
+                    elif int(acc) == 5:
+                        while True:
+                            celda_curar = input('Introduce la celda donde se encuentre el personaje que quieras curar: ')
+                            medico1 = self.equipo[0]
+                            medico_instancia = medico(medico1['vida maxima'], medico1['vida actual'], medico1['dano'],
+                                                      medico1['posicion'], medico1['enfriamiento'])
+                            if medico_instancia.habilidad(celda_curar, self.equipo) == True:
+                                for elemento in self.equipo:
+                                    if elemento['enfriamiento'] == 0:
+                                        if elemento['posicion'] == celda_curar:
+                                            personaje_a_curar = elemento['nombre']
+                                            self.turno.append(f'Se ha curado el {personaje_a_curar} de la celda: {celda_curar}')
+                                            return True
+                                    else:
+                                        print('El enfriamiento esta activado para este turno, prueba en el sigueinte')
+                                        break
+                                break
+                    elif int(acc) == 6:
+                        while True:
+                            celda_atacar = input('Introduce la celda a la que quieres atacar: ')
+                            francotirador1 = self.equipo[2]
+                            francotirador_instancia = francotirador(francotirador1['vida maxima'],francotirador1['vida actual'],francotirador1['dano'], francotirador1['posicion'],
+                                                                    francotirador1['enfriamiento'])
+                            if francotirador_instancia.habilidad(celda_atacar, self.equipo):
+                                self.recibir_accion('f',celda_atacar)
+                                return True
+
+                    elif int(acc) == 7:
+                        pass
+                    elif int(acc) == 8:
+                        pass
+                else:
+                    print('El numero introducido no es correcto')
+            except ValueError:
+                print('Mal formato')
+
 
     def informe1(self):
+
         print('-----> INFORME <-----')
         for p in self.turno:
             print(p)
-        print('-----> SITUACIÓN DEL EQUIPO <-----')
+        self.turno.clear()
+        print('<------------------------------>')
 
+        print('-----> SITUACIÓN DEL EQUIPO <-----')
         for elemento in self.equipo:
             if elemento['vida actual'] > 0:
                 print(f"{elemento['nombre'].upper()} --> Posicion: {elemento['posicion'].upper()} --> [Vidas {elemento['vida actual']}/{elemento['vida maxima']}]")
-
+        print('<------------------------------>')
 
     def turno(self) -> bool:
         if self.turno_end:
@@ -172,7 +205,9 @@ class Jugador:
         else:
 
             return False
-
+    def set_oponente(self,oponente):
+        self.oponente = oponente
+        return self.oponente
 
 '''jugar = Jugador('Nombre')
 jugar.crear_equipo(jugar)
