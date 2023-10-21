@@ -15,30 +15,35 @@ class Personajes:
         print('Aqui no entra')
 
 
-        '''for i in equipo:
-            for b in i.values():
-                print(i.values())
-                if celda not in b:
-                    if validar_celda_contigua(b, celda):
-                        print(f'Te moviste a la celda{celda}')
-                        return True
-                    else:
-                        print(f'La celda{celda} no es contigua.')
-                        return False
-                else:
-                    print('¡La celda que has introducido es la misma!')
-                    return False'''
-
-
 
 class medico(Personajes):
     def __init__(self, vida_maxima, vida_actual, dano, posicion, enfriamiento):
         super().__init__(vida_maxima,vida_actual,dano,posicion,enfriamiento)
 
     def habilidad(self,celda_curar, equipo):
+
         if self.vida_actual > 0:
             if validar_celda(celda_curar,'d',4):
-                pass
+                if comprobar_celda_disponible(celda_curar,equipo) == False:
+                    for miembro in equipo:
+                        for validar in miembro.values():
+                            if validar == celda_curar:
+                                if miembro['vida actual'] < miembro['vida maxima'] and miembro['vida actual'] > 0:
+                                    miembro['vida actual'] = miembro['vida maxima']
+                                    return True
+                                else:
+                                    print('El miembro que intentas curar esta muerto o tiene su maxima vida')
+                                    return False
+                            else:
+                                pass
+                else:
+                    print('La celda que has indicado no hay nadie...')
+                    return False
+        else:
+            print('No puedes usar la habilidad porque el medico esta muerto')
+            return False
+
+
 
 
     def mover(self, celda_nueva, equipo):
@@ -72,7 +77,7 @@ class inteligencia(Personajes):
             if comprobar_celda_disponible(celda_nueva, equipo):
                 if validar_celda_contigua(self.posicion,celda_nueva):
                     self.posicion = celda_nueva
-                    equipo[3]['inteligencia'] = self.posicion
+                    equipo[3]['posicion'] = self.posicion
                     return True
                 else:
                     return False
@@ -97,7 +102,7 @@ class artillero(Personajes):
             if comprobar_celda_disponible(celda_nueva, equipo):
                 if validar_celda_contigua(self.posicion,celda_nueva):
                     self.posicion = celda_nueva
-                    equipo[1]['artillero'] = self.posicion
+                    equipo[1]['posicion'] = self.posicion
                     return True
                 else:
                     return False
@@ -113,8 +118,19 @@ class francotirador(Personajes):
     def __init__(self, vida_maxima, vida_actual, dano, posicion, enfriamiento):
         super().__init__(vida_maxima,vida_actual,dano,posicion,enfriamiento)
 
-    def habilidad(self):
-        return
+    def habilidad(self,celda_atacar, equipo):
+        if equipo[2]['vida actual'] > 0:
+            if equipo[2]['enfriamiento'] == 0:
+                if validar_celda(celda_atacar, 'd', 4):
+                    print(f'Se ha ejecutado el ataque a la celda: {celda_atacar}')
+                    return True
+
+            else:
+                print('Ya usaste esta habilidad')
+                return False
+        else:
+            print('Tu francotirador esta muerto, no puedes hacer eso')
+
 
     def mover(self, celda_nueva, equipo):
 
@@ -122,7 +138,7 @@ class francotirador(Personajes):
             if comprobar_celda_disponible(celda_nueva, equipo):
                 if validar_celda_contigua(self.posicion,celda_nueva):
                     self.posicion = celda_nueva
-                    equipo[2]['francotirador'] = self.posicion
+                    equipo[2]['posicion'] = self.posicion
                     return True
                 else:
                     return False
