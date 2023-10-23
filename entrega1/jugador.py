@@ -24,7 +24,7 @@ class Jugador:
     def crear_equipo(self,nombre):
 
         # CREAMOS EL MEDICO CON SUS CARACTERISTICAS
-        medico_instancia = medico(1,1, 0,'',0)  #Instanciamos los valores que tiene el medico al inicializar el juego.
+        medico_instancia = medico(1,0, 0,'',1)  #Instanciamos los valores que tiene el medico al inicializar el juego.
         dicc_medico = {'nombre': 'medico', 'vida maxima': medico_instancia.vida_maxima, 'vida actual': medico_instancia.vida_actual, 'dano': medico_instancia.dano,
                        'posicion': medico_instancia.posicion, 'enfriamiento': medico_instancia.enfriamiento}
         self.equipo.append(dicc_medico)   #  Guardamos todos los  valores en un diccionario dentro de la lista
@@ -85,28 +85,84 @@ class Jugador:
                     print(self.equipo)
                     break
 
-    def recibir_accion(self, tipo,celda_afectada):
+    def calculo_celdas(self, celda_usuario, max_col, max_row):
 
+        col_usuario = ord(celda_usuario[0].lower()) - ord('a')
+        row_usuario = int(celda_usuario[1])
+
+        celdas_contiguas = [celda_usuario]
+
+        if col_usuario > 0:
+            celdas_contiguas.append(chr(col_usuario + ord('a') - 1) + str(row_usuario))
+
+        if col_usuario < (ord(max_col.lower()) - ord('a')):
+            celdas_contiguas.append(chr(col_usuario + ord('a') + 1) + str(row_usuario))
+
+        if row_usuario > 1:
+            celdas_contiguas.append(celda_usuario[0] + str(row_usuario - 1))
+
+        if row_usuario < max_row:
+            celdas_contiguas.append(celda_usuario[0] + str(row_usuario + 1))
+
+        return celdas_contiguas
+
+    def recibir_accion(self, tipo,celda_afectada):
+        print('-----> RESULTADO DE LA ACCIÓN <-----')
         if tipo == 'f':
             print(self.oponente.equipo)
             for miembro in self.oponente.equipo:
                 if miembro['posicion'] == celda_afectada:
                     miembro['vida actual'] = 0
-                    print('-----> RESULTADO DE LA ACCIÓN <-----')
                     print(f"El {miembro['nombre']} ha muerto en la celda: {celda_afectada}")
                     self.oponente.turno.append(f"Tu {miembro['nombre']} ha muerto :(")
                 else:
                     pass
-    def realizar_accion(self):
 
-        print('-----> 1. Mover (Medico) <-----')
-        print('-----> 2. Mover (Artillero) <-----')
-        print('-----> 3. Mover (Francotirador) <-----')
-        print('-----> 4. Mover (Inteligencia) <-----')
-        print('-----> 5. Habilidad (Medico) <-----')
-        print('-----> 6. Habilidad (Artillero) <-----')
-        print('-----> 7. Habilidad (Francotirador) <-----')
-        print('-----> 8. Habilidad (Inteligencia) <-----')
+        elif tipo =='a':
+            afectados = self.calculo_celdas(celda_afectada, max_col, max_row)
+            print(afectados)
+            for miembro in self.oponente.equipo:
+                for i in afectados:
+                    if miembro['posicion'] == i:
+                        if miembro['vida actual'] > 0:
+                            miembro['vida actual'] = miembro['vida actual'] - 1
+                            print(f"El {miembro['nombre']} ha sido herido en la celda: {miembro['posicion']}")
+                            self.oponente.turno.append(f"Tu {miembro['nombre']} ha sido herido en la celda: {miembro['posicion'].upper()} VIDAS[{miembro['vida actual']}/{miembro['vida maxima']}]")
+                        else:
+                            print(f"El {miembro['nombre']} ya estaba muerto :(")
+                    else:
+                        pass
+        elif tipo =='i':
+            afectados = self.calculo_celdas(celda_afectada, max_col, max_row)
+            print(afectados)
+            for miembro in self.oponente.equipo:
+                for i in afectados:
+                    if miembro['posicion'] == i:
+                        if miembro['vida actual'] > 0:
+                            print(f"El {miembro['nombre']} ha sido avistado en la celda: {miembro['posicion']}")
+                            self.oponente.turno.append(f"Tu {miembro['nombre']} ha sido avistado en la celda: {miembro['posicion'].upper()}")
+                        else:
+                            print(f"El {miembro['nombre']} ya estaba muerto :(")
+                    else:
+                        pass
+
+    def realizar_accion(self):
+        if self.equipo[0]['vida actual'] > 0:
+            print('-----> 1. Mover (Medico) <-----')
+        if self.equipo[1]['vida actual'] > 0:
+            print('-----> 2. Mover (Artillero) <-----')
+        if self.equipo[2]['vida actual'] > 0:
+            print('-----> 3. Mover (Francotirador) <-----')
+        if self.equipo[3]['vida actual'] > 0:
+            print('-----> 4. Mover (Inteligencia) <-----')
+        if self.equipo[0]['vida actual'] > 0 and self.equipo[0]['enfriamiento'] == 0:
+            print('-----> 5. Habilidad (Medico) <-----')
+        if self.equipo[1]['vida actual'] > 0 and self.equipo[1]['enfriamiento'] == 0:
+            print('-----> 6. Habilidad (Artillero) <-----')
+        if self.equipo[2]['vida actual'] > 0 and self.equipo[2]['enfriamiento'] == 0:
+            print('-----> 7. Habilidad (Francotirador) <-----')
+        if self.equipo[3]['vida actual'] > 0 and self.equipo[3]['enfriamiento'] == 0:
+            print('-----> 8. Habilidad (Inteligencia) <-----')
 
         while True:
             try:
@@ -167,18 +223,35 @@ class Jugador:
                                 break
                     elif int(acc) == 6:
                         while True:
+                            celda_marcada = input('Introduce la celda a atacar en un 2x2 con el artillero: ')
+                            artillero1 = self.equipo[1]
+                            artillero_instancia = artillero(artillero1['vida maxima'], artillero1['vida actual'],
+                                                            artillero1['dano'], artillero1['posicion'],
+                                                            artillero1['enfriamiento'])
+                            if artillero_instancia.habilidad(celda_marcada, self.equipo):
+                                self.recibir_accion('a', celda_marcada)
+                                return True
+                    elif int(acc) == 7:
+                        while True:
                             celda_atacar = input('Introduce la celda a la que quieres atacar: ')
                             francotirador1 = self.equipo[2]
-                            francotirador_instancia = francotirador(francotirador1['vida maxima'],francotirador1['vida actual'],francotirador1['dano'], francotirador1['posicion'],
+                            francotirador_instancia = francotirador(francotirador1['vida maxima'],
+                                                                    francotirador1['vida actual'],
+                                                                    francotirador1['dano'], francotirador1['posicion'],
                                                                     francotirador1['enfriamiento'])
                             if francotirador_instancia.habilidad(celda_atacar, self.equipo):
-                                self.recibir_accion('f',celda_atacar)
+                                self.recibir_accion('f', celda_atacar)
                                 return True
-
-                    elif int(acc) == 7:
-                        pass
                     elif int(acc) == 8:
-                        pass
+                        celda_marcada = input('Introduce la celda a atacar en un 2x2 con la inteligencia: ')
+                        inteligencia1 = self.equipo[3]
+                        inteligencia_instancia = inteligencia(inteligencia1['vida maxima'],
+                                                              inteligencia1['vida actual'],
+                                                              inteligencia1['dano'], inteligencia1['posicion'],
+                                                              inteligencia1['enfriamiento'])
+                        if inteligencia_instancia.habilidad(celda_marcada, self.equipo):
+                            self.recibir_accion('i', celda_marcada)
+                            return True
                 else:
                     print('El numero introducido no es correcto')
             except ValueError:
