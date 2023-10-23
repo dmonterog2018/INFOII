@@ -69,8 +69,11 @@ class inteligencia(Personajes):
         super().__init__(vida_maxima,vida_actual,dano,posicion,enfriamiento)
 
 
-    def habilidad(self):
-        return
+    def habilidad(self, celda_marcada, equipo):
+        if validar_celda(celda_marcada, 'd', 4):
+                print(f'La inteligencia esta rastreando en la celda: {celda_marcada}...')
+                equipo[3]['enfriamiento'] = 1
+                return True
     def mover(self, celda_nueva, equipo):
 
         if validar_celda(celda_nueva, 'd',4):
@@ -93,8 +96,11 @@ class artillero(Personajes):
     def __init__(self, vida_maxima, vida_actual, dano, posicion, enfriamiento):
         super().__init__(vida_maxima,vida_actual,dano,posicion,enfriamiento)
 
-    def habilidad(self):
-        return
+    def habilidad(self, celda_marcada, equipo):
+        if validar_celda(celda_marcada, 'd', 4):
+                print(f'Se ha ejecutado el ataque a la celda: {celda_marcada}')
+                equipo[1]['enfriamiento'] = 1
+                return True
 
     def mover(self, celda_nueva, equipo):
 
@@ -123,6 +129,7 @@ class francotirador(Personajes):
             if equipo[2]['enfriamiento'] == 0:
                 if validar_celda(celda_atacar, 'd', 4):
                     print(f'Se ha ejecutado el ataque a la celda: {celda_atacar}')
+                    equipo[2]['enfriamiento'] = 1
                     return True
 
             else:
