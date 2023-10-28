@@ -9,16 +9,16 @@ from jugador import Jugador
 def main():
     print('Bienvenidos a Tactical Battle. Iniciemos tu aventura en el juego!\n')
     input('Turno del Jugador 1. Pulsa intro para comenzar el juego...')
-    j1 = Jugador('nombre')
-    j1.crear_equipo('nombre')
-    j1.posicionar_equipo('nombre')
+    j1 = Jugador()
+    j1.crear_equipo()
+    j1.posicionar_equipo()
     input('Jugador 1, ha terminado su turno')
     limpiar_terminal()
 
     input('Turno del Jugador 2. Pulsa intro para comenzar su turno...')
-    j2 = Jugador('nombre')
-    j2.crear_equipo('nombre')
-    j2.posicionar_equipo('nombre')
+    j2 = Jugador()
+    j2.crear_equipo()
+    j2.posicionar_equipo()
     input('Jugador 2, ha terminado su turno. Pulse intro.')
     limpiar_terminal()
 
@@ -27,9 +27,7 @@ def main():
     final = False
     while not final:
         input('Turno del Jugador 1. Pulsa intro para comenzar')
-        j1.informe1()
-        j1.realizar_accion()
-        j1.set_oponente(j2)
+        final = j1.turno1()
 
         if final:
             print('****** EL JUGADOR 1 HA GANADO LA PARTIDA! ********')
@@ -38,9 +36,7 @@ def main():
         limpiar_terminal()
 
         input('Turno del Jugador 2. Pulsa intro para comenzar')
-        j2.informe1()
-        j2.realizar_accion()
-        j2.set_oponente(j1)
+        final = j2.turno1()
         if final:
             print('****** EL JUGADOR 2 HA GANADO LA PARTIDA! ********')
             return 0
