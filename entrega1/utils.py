@@ -11,7 +11,6 @@ def validar_celda(celda, max_col,max_row) -> bool:
         return False
     else:
         if celda[0] <= max_col and int(celda[1]) <= max_row:
-            print("Celda correcta")
             return True
         else:
             print("Celda fuera de rango, intentalo otra vez")
@@ -34,7 +33,7 @@ def validar_celda_contigua(celda1,celda2) -> bool:
     if not validar_celda(celda2, max_col,max_row):
         return False
 
-    if ((celda1[0] == celda2[0] and abs(celda1[1] - celda2[1]) == 1) or (celda1[1] == celda2[1] and abs(ord(celda1[0]) - ord(celda2[0]))== 1)):
+    if ((celda1[0] == celda2[0] and abs(int(celda1[1]) - int(celda2[1])) == 1) or (celda1[1] == celda2[1] and abs(ord(celda1[0]) - ord(celda2[0]))== 1)):
         print('Movimiento efectueado')
         return True
 
