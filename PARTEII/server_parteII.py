@@ -109,34 +109,42 @@ def manejo_partida(j1, j2):
     j2.send(pickle.dumps(mensaje3))
 
     while not final:
-        hilo3 = threading.Thread(target=trabajada, args=(j1,j2))
+
+        hilo3 = threading.Thread(target=trabajada, args=(j1, j2))
+        hilo4 = threading.Thread(target=trabajada, args=(j2, j1))
+
         lock.acquire()
         hilo3.start()
         hilo3.join()
-        if hilo3:
-            lock.release()
-            #j2.send(pickle.dumps(hilo3))
-            hilo4 = threading.Thread(target=trabajada,args=(j2,j1))
-            hilo4.start()
-            hilo4.join()
-            lock.acquire()
-            if hilo4:
-                lock.release()
+        lock.release()
 
+        lock.acquire()
+        hilo4.start()
+        hilo4.join()
+        lock.release()
 
 
 def trabajada(jugador1, j2):
     jugador1.send(pickle.dumps('---> ES SU TURNO <---'))
-    while True:
-        datos5 = jugador1.recv(1024)
-        print(pickle.loads(datos5))
-        if not datos5:
-            print("HOLA")
-        if pickle.loads(datos5) == 'FIN':
-            jugador1.send(pickle.dumps('---> FIN DE TURNO. ESPERE EL SIGUIENTE <---'))
-            return True
-        else:
-            return pickle.loads(datos5)
+    datos5 = jugador1.recv(1024)
+    print(pickle.loads(datos5))
+
+    if pickle.loads(datos5) == 'FIN':
+        jugador1.send(pickle.dumps('---> FIN DE TURNO. ESPERE EL SIGUIENTE <---'))
+        return True
+    else:
+        enviar = pickle.loads(datos5)
+        print(enviar)
+        j2.send(pickle.dumps(enviar))
+        datos6 = j2.recv(1024)
+        cadena = pickle.loads(datos6)
+
+        for i in cadena:
+            jugador1.send(pickle.dumps(i))
+        time.sleep(1)
+        jugador1.send(pickle.dumps('---> FIN DE TURNO. ESPERE EL SIGUIENTE <---'))
+
+        return False
 try:
     while True:
         client_socket, addr = server_socket.accept()

@@ -1,24 +1,29 @@
 import socket
 import sys
 import pickle
+import time
+
 from jugador import Jugador
 
 c = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 c.connect((sys.argv[1], int(sys.argv[2])))
 
-usuario = input("Introduce el nombre de usuario en partida: ")
-if len(usuario) != 0:
-    print("Enviando usuario al servidor...")
-    c.send(pickle.dumps(usuario))
-elif len(usuario) == 0:
-    print("Introduce un usuario por favor")
+while True:
+    usuario = input("Introduce el nombre de usuario en partida: ")
+    if len(usuario) != 0:
+        print("Enviando usuario al servidor...")
+        c.send(pickle.dumps(usuario))
+        break
+    else:
+        print("Introduce un usuario por favor")
 
 j1 = Jugador()
 
 while True:
     datos = c.recv(1024)
-    print(pickle.loads(datos))
-    if pickle.loads(datos).startswith('<---- ¡Has ganado') or pickle.loads(datos).startswith('Es tu turno'):
+    if not isinstance(pickle.loads(datos), tuple):
+        print(pickle.loads(datos))
+    if pickle.loads(datos) == (f"<---- ¡Has ganado {usuario}!. Comienzas la partida... ---->") or pickle.loads(datos) == ('Es tu turno. Posiciona el equipo.'):
 
         j1.crear_equipo()
         j1.posicionar_equipo()
@@ -32,14 +37,20 @@ while True:
         resultado = j1.realizar_accion()
 
         if isinstance(resultado, bool) and resultado:
-            print("Éxito: Solo contiene True")
             c.send(pickle.dumps('FIN'))
 
         elif isinstance(resultado, tuple) and len(resultado) == 2:
-            print("Éxito: Contiene datos adicionales")
             letra, celda = resultado
             c.send(pickle.dumps(resultado))
             # Haz lo que necesites con letra y celda
+    elif isinstance(pickle.loads(datos), tuple):
+        lanzamiento = pickle.loads(datos)
+        verificacion = lanzamiento[0]
+        tupla = lanzamiento[1]
+        tipo, celda = tupla
+        j1.recibir_accion(tipo,celda)
+        time.sleep(3)
+        c.send(pickle.dumps(j1.turno))
 
 
 

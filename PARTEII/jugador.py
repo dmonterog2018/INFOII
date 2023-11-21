@@ -110,21 +110,21 @@ class Jugador:
 
     # Funcion que recibe la accion ejecutada por el oponente
     def recibir_accion(self, tipo, celda_afectada):
-        print('-----> RESULTADO DE LA ACCIÓN <-----')
-
+        print('-----> INFORME <-----')
+        self.turno.append(f"-----> RESULTADO DE LA ACCIÓN <-----\n")
         if tipo == 'f':  # Si el tipo es Francotirador
             for miembro in self.equipo:  # Recorremos la lista equipo enemigo
                 if miembro[
                     'posicion'] == celda_afectada:  # Comprobamos si en la casilla afectada se encuentra un miembro del equipo
                     miembro['vida actual'] = miembro['vida actual'] - self.equipo[2][
                         'dano']  # Modificamos la vida del personaje con el daño del francotirador
-                    print(f"El {miembro['nombre']} ha muerto en la celda: {celda_afectada}")
-                    self.turno.append(
-                        f"Tu {miembro['nombre']} ha muerto :(")  # Añadimos al informe que el personaje afectado a muerto
+                    print(f"Tu {miembro['nombre']} ha muerto :(")
+                    self.turno.append(f"El {miembro['nombre']} ha muerto en la celda: {celda_afectada}")  # Añadimos al informe que el personaje afectado a muerto
                 else:
                     pass
 
         elif tipo == 'a':  # Si el tipo es Artillero
+
             afectados = self.calculo_celdas(celda_afectada, max_col,
                                             max_row)  # Calculamos el area que va a ser afectada en el tablero
             for miembro in self.equipo:  # Recorremos la lista equipo enemigo
@@ -133,10 +133,9 @@ class Jugador:
                         if miembro['vida actual'] > 0:  # Comprobamos que el personaje este vivo
                             miembro['vida actual'] = miembro['vida actual'] - self.equipo[1][
                                 'dano']  # Modificamos la vida del personaje con el daño del artillero
-                            print(f"El {miembro['nombre']} ha sido herido en la celda: {miembro['posicion']}")
+                            print(f"El {miembro['nombre']} ha sido herido en la celda: {miembro['posicion']} ---> VIDAS[{miembro['vida actual']}/{miembro['vida maxima']}]")
                             # Añadimos al informe el personaje afectado con la celda y la vida actual comparada con la vida maxima
-                            self.turno.append(
-                                f"Tu {miembro['nombre']} ha sido herido en la celda: {miembro['posicion'].upper()} VIDAS[{miembro['vida actual']}/{miembro['vida maxima']}]")
+                            self.turno.append(f"El {miembro['nombre']} ha sido herido en la celda: {miembro['posicion'].upper()}")
                         else:
                             print(f"El {miembro['nombre']} ya estaba muerto :(")
                     else:
@@ -319,12 +318,6 @@ class Jugador:
 
     # Funcion para mostrar informe
     def informe1(self):
-        print('-----> INFORME <-----')
-        for p in self.turno:  # Recorremos la lista turno
-            print(p)  # Imprimimos por pantalla los resultados del turno
-        self.turno.clear()
-        print('<------------------------------>')
-
         print('-----> SITUACIÓN DEL EQUIPO <-----')
         for elemento in self.equipo:  # Recorremos la lista equipo
             if elemento[
