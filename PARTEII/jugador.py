@@ -148,10 +148,10 @@ class Jugador:
                 for i in afectados:  # Recorremos una lista con las casilas afectadas
                     if miembro['posicion'] == i:  # Comprobamos si hay algun personaje en las casillas
                         if miembro['vida actual'] > 0:  # Comprobamos que el personaje este vivo
-                            print(f"El {miembro['nombre']} ha sido avistado en la celda: {miembro['posicion']}")
+                            print(f"Tu {miembro['nombre']} ha sido avistado en la celda: {miembro['posicion']}")
                             # Añadimos al informe el personaje afectado con la celda en la que se encuentra
                             self.turno.append(
-                                f"Tu {miembro['nombre']} ha sido avistado en la celda: {miembro['posicion'].upper()}")
+                                f"El {miembro['nombre']} ha sido avistado en la celda: {miembro['posicion'].upper()}")
                         else:
                             print(f"El {miembro['nombre']} ya estaba muerto :(")
                     else:
@@ -340,7 +340,7 @@ class Jugador:
             if miembros['vida actual'] <= 0:  # Comprobamos que la vida actual sea menor que 0
                 miembros['posicion'] = ''  # Asignamos una posicion vacia
 
-    def turno1(self) -> bool:
+    def turno1(self):
         if self.turno_end == False:  # Comprobamos si el turno ha terminado
             self.tiempo_enfriamiento()  # Llamamos a la funcion
             self.limpiar_pos()  # Llamamos a la funcion
@@ -348,11 +348,10 @@ class Jugador:
             print(self.realizar_accion()) # Llamamos a la funcion
             #self.set_oponente(self.oponente)  # Llamamos a la funcion
 
-            if self.equipo[1]['vida actual'] <= 0 and self.equipo[2][
-                'vida actual'] <= 0.:  # Comprobamos si el artillero y el francoritador del equipo rival han sido derrotados (personajes militares)
-                return True  # Si se cumple la condicion el juego termina
-            else:
-                return False
+    def check_point(self) -> bool:
+        if self.equipo[1]['vida actual'] <= 0 and self.equipo[2][
+            'vida actual'] <= 0.:  # Comprobamos si el artillero y el francoritador del equipo rival han sido derrotados (personajes militares)
+            return True  # Si se cumple la condicion el juego termina
         else:
             return False
 

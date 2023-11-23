@@ -13,33 +13,29 @@ print("PUERTO servidor de juego: ", sys.argv[1])
 server_socket.listen(10)
 
 sala_espera = []
-lock = threading.Lock()
-final = False
+
 def bienvenida(client_socket, usuario):
 
     msg1 = f"Bienvenido al juego {usuario}, esta usted en la sala de espera"
     client_socket.send(pickle.dumps(msg1))
-    lock.acquire()
     sala_espera.append((client_socket, usuario))
-    lock.release()
+    print(sala_espera)
+    if len(sala_espera) >= 2:
+        emparejar_clientes()
 def emparejar_clientes():
-    while True:
-        if len(sala_espera) >= 2:
-            lock.acquire()
-            # Toma los dos primeros clientes de la lista
-            cliente1, cliente2 = sala_espera[:2]
-            print(cliente2)
-            print(cliente1)
-            # Elimina los clientes emparejados de la lista
-            sala_espera.remove(cliente1)
-            sala_espera.remove(cliente2)
 
-            # Lanza la partida con los clientes emparejados
-            partida(cliente1, cliente2)
-            lock.release()
 
-hilo_emparejar = threading.Thread(target=emparejar_clientes)
-hilo_emparejar.start()
+    cliente1, cliente2 = sala_espera[:2]
+    print(cliente2)
+    print(cliente1)
+    # Elimina los clientes emparejados de la lista
+    sala_espera.remove(cliente1)
+    sala_espera.remove(cliente2)
+    print(sala_espera)
+
+    # Lanza la partida con los clientes emparejados
+    hilo2 = threading.Thread(target = partida, args = ((cliente1, cliente2)))
+    hilo2.start()
 
 def partida(client_socket1, client_socket2):
     usuario1 = client_socket1[1]
@@ -104,27 +100,17 @@ def partida(client_socket1, client_socket2):
 def manejo_partida(j1, j2):
     mensaje1 = f"----> COMIENZO DE LA PARTIDA <----"
     mensaje3 = f"----> COMIENZO DE LA PARTIDA. ESPERA TU TURNO <----"
-
+    final = False
     j1.send(pickle.dumps(mensaje1))
     j2.send(pickle.dumps(mensaje3))
 
     while not final:
 
-        hilo3 = threading.Thread(target=trabajada, args=(j1, j2))
-        hilo4 = threading.Thread(target=trabajada, args=(j2, j1))
-
-        lock.acquire()
-        hilo3.start()
-        hilo3.join()
-        lock.release()
-
-        lock.acquire()
-        hilo4.start()
-        hilo4.join()
-        lock.release()
-
-
-def trabajada(jugador1, j2):
+        if mensajeria_turno(j1,j2) is False:
+            break
+        if mensajeria_turno(j2,j1) is False:
+            break
+def mensajeria_turno(jugador1, j2):
     jugador1.send(pickle.dumps('---> ES SU TURNO <---'))
     datos5 = jugador1.recv(1024)
     print(pickle.loads(datos5))
@@ -132,19 +118,24 @@ def trabajada(jugador1, j2):
     if pickle.loads(datos5) == 'FIN':
         jugador1.send(pickle.dumps('---> FIN DE TURNO. ESPERE EL SIGUIENTE <---'))
         return True
+    elif pickle.loads(datos5) == 'PERDIDO':
+        print("RECIBIDO PERDIDO")
+        time.sleep(1)
+        j2.send(pickle.dumps('GANADO'))
+        return False
     else:
         enviar = pickle.loads(datos5)
         print(enviar)
         j2.send(pickle.dumps(enviar))
         datos6 = j2.recv(1024)
         cadena = pickle.loads(datos6)
-
+        time.sleep(1)
         for i in cadena:
             jugador1.send(pickle.dumps(i))
         time.sleep(1)
         jugador1.send(pickle.dumps('---> FIN DE TURNO. ESPERE EL SIGUIENTE <---'))
+        return True
 
-        return False
 try:
     while True:
         client_socket, addr = server_socket.accept()
@@ -163,5 +154,5 @@ try:
 
 
 except KeyboardInterrupt:
-    server_socket.close()
     print("Apagando servidor de juego :(")
+    server_socket.close()

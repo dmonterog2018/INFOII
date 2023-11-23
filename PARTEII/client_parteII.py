@@ -28,8 +28,14 @@ while True:
         j1.crear_equipo()
         j1.posicionar_equipo()
         c.send(pickle.dumps('OK'))
-
+    elif pickle.loads(datos) == 'GANADO':
+        print(f"***** HAS GANADO LA PARTIDA {usuario}, ENHORABUENA *****")
+        break
     elif pickle.loads(datos) =='---> ES SU TURNO <---':
+        if j1.check_point():
+            c.send(pickle.dumps('PERDIDO'))
+            print(f'***** HAS PERDIDO LA PARTIDA {usuario}, BIEN JUGADO *****')
+            break
         j1.tiempo_enfriamiento()  # Llamamos a la funcion
         j1.limpiar_pos()  # Llamamos a la funcion
         j1.informe1()  # Llamamos a la funcion
@@ -52,8 +58,8 @@ while True:
         time.sleep(3)
         c.send(pickle.dumps(j1.turno))
 
-
-
+print('---> DESCONECTANDO DEL SERVIDOR <---')
+c.close()
 
 
 
