@@ -109,6 +109,12 @@ class Jugador:
         return celdas_contiguas
 
     # Funcion que recibe la accion ejecutada por el oponente
+    def muertos(self):
+        muero = 0
+        for p in self.equipo:
+            if p['vida actual'] <= 0:
+                muero += 1
+        return muero
     def recibir_accion(self, tipo, celda_afectada):
         print('-----> INFORME <-----')
         self.turno.append(f"-----> RESULTADO DE LA ACCIÓN <-----\n")
