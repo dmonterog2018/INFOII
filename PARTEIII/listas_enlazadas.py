@@ -52,5 +52,5 @@ class ListaEnlazada:
             salida += str(actual.dato) +" : " + str(actual.puntuacion) + "\n"
             actual = actual.siguiente
 
-        return salida[:-2]
+        return salida[:-1]
 

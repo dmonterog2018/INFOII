@@ -21,6 +21,7 @@ l = ListaEnlazada()
 
 
 
+
 contador_partidas = 0
 
 def metodo_ranking():
@@ -33,7 +34,7 @@ def metodo_ranking():
         print(l.mostrar())
     return True
 
-
+metodo_ranking()
 
 def bienvenida(client_socket, usuario):
     if max_partidas > contador_partidas:
@@ -66,7 +67,7 @@ def emparejar_clientes():
     hilo2.start()
     contador_partidas += 1
     print(contador_partidas)
-    metodo_ranking()
+
 
 def partida(client_socket1, client_socket2):
     # Asignamos CARA al primer cliente y cruz al segundo para el sorteo, mandamos los mensajes y lanzamos la partida
@@ -178,13 +179,17 @@ def mensajeria_turno(jugador1, j2, contador_turnos):
         puntuacionperdido = (pickle.loads(datos)[0], pickle.loads(datos)[1])
         print(puntuacionganador[0], puntuacionganador[1])
         print(puntuacionperdido[0], puntuacionperdido[1])
-        l.insertarEn(puntuacionganador[0], puntuacionganador[1])
-        l.insertarEn(puntuacionperdido[0], puntuacionperdido[1])
-        metodo_ranking()
+        l.insertarEn(puntuacionganador[0], int(puntuacionganador[1]))
         time.sleep(1)
-
+        l.insertarEn(puntuacionperdido[0], int(puntuacionperdido[1]))
+        time.sleep(1)
+        # Enviamos el ranking a los jugadores
         jugador1.send(pickle.dumps(l.mostrar()))
         j2.send(pickle.dumps(l.mostrar()))
+
+        file = open(ranking, 'w')
+        file.write(l.mostrar())
+        file.close()
         return False
     else: # Si realizamos una accion y recibimso una tupla la enviamos al oponente, y esperamos a recibir el resultado de la accion y continuamos con el siguieinte turno.
         enviar = pickle.loads(datos5)

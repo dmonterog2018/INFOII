@@ -83,11 +83,9 @@ while True:
             cont = pickle.loads(datos)[1]
             total = puntuacionp(cont, pickle.loads(datos)[2], pickle.loads(datos)[3])
             print(f"***** PUNTUACIÓN TOTAL: {total} *****")
-            enviar = usuario + " : " + str(total)
+            enviar = usuario, str(total)
             c.send(pickle.dumps(enviar))
-            print("ENVIADO")
             datos = c.recv(1024)
-            print("ENTRA")
             print("-----> RANKING <------" + "\n" + pickle.loads(datos))
             time.sleep(3)
             break
